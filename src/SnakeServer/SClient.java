@@ -64,6 +64,34 @@ public class SClient {
                             TheClient.name = received.content.toString();
                             // isim verisini gönderdikten sonra eşleştirme işlemine başla
                             break;
+                        case UpArrow:
+                            if ((!Board.downDirection)) {
+                                Board.leftDirection = false;
+                                Board.upDirection = true;
+                                Board.rightDirection = false;
+                            }
+                            break;
+                        case DownArrow:
+                            if ((!Board.upDirection)) {
+                                Board.leftDirection = false;
+                                Board.rightDirection = false;
+                                Board.downDirection = true;
+                            }
+                            break;
+                        case LeftArrow:
+                            if ((!Board.rightDirection)) {
+                                Board.leftDirection = true;
+                                Board.upDirection = false;
+                                Board.downDirection = false;
+                            }
+                            break;
+                        case RightArrow:
+                            if ((!Board.leftDirection)) {
+                                Board.rightDirection = true;
+                                Board.upDirection = false;
+                                Board.downDirection = false;
+                            }
+                            break;
                         case Disconnect:
                             break;
                     }

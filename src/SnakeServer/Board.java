@@ -1,5 +1,10 @@
 package SnakeServer;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.oracle.javafx.jmx.json.JSONWriter;
+import game.Message;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -9,20 +14,24 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class Board extends JPanel implements ActionListener {
 
+
+    static public SClient client;
+
     private final int B_WIDTH = 900;
     private final int B_HEIGHT = 900;
     private final int DOT_SIZE = 10;
     private final int ALL_DOTS = 900;
     private final int RAND_POS = 29;
-    private final int DELAY = 140;
+    public final int DELAY = 140;
 
     private final int x[] = new int[ALL_DOTS];
     private final int y[] = new int[ALL_DOTS];
@@ -31,25 +40,33 @@ public class Board extends JPanel implements ActionListener {
     private int apple_x;
     private int apple_y;
 
-    private boolean leftDirection = false;
-    private boolean rightDirection = true;
-    private boolean upDirection = false;
-    private boolean downDirection = false;
+    public static boolean leftDirection = false;
+    public static boolean rightDirection = true;
+    public static boolean upDirection = false;
+    public static boolean downDirection = false;
     private boolean inGame = true;
 
-    private Timer timer;
+    public Timer timer;
     private Image ball;
     private Image apple;
     private Image head;
 
     public Board() {
-        
         initBoard();
     }
-    
+    public Map<String,Object> getBoard(){
+        Map<String,Object> boardInfo = new HashMap<>();
+        boardInfo.put("dots",dots);
+        boardInfo.put("B_WIDTH",B_WIDTH);
+        boardInfo.put("B_HEIGHT",B_HEIGHT);
+        boardInfo.put("apple_x",apple_x);
+        boardInfo.put("apple_y",apple_y);
+        boardInfo.put("x",x);
+        boardInfo.put("y",y);
+        return boardInfo;
+    }
     private void initBoard() {
 
-        addKeyListener(new TAdapter());
         setBackground(Color.black);
         setFocusable(true);
 
@@ -78,11 +95,7 @@ public class Board extends JPanel implements ActionListener {
             x[z] = 50 - z * 10;
             y[z] = 50;
         }
-        
         locateApple();
-
-        timer = new Timer(DELAY, this);
-        timer.start();
     }
 
     @Override
@@ -158,7 +171,7 @@ public class Board extends JPanel implements ActionListener {
     }
 
     private void checkCollision() {
-
+        Message endMessage = new Message(Message.Message_Type.Bitis);
         for (int z = dots; z > 0; z--) {
 
             if ((z > 4) && (x[0] == x[z]) && (y[0] == y[z])) {
@@ -183,6 +196,7 @@ public class Board extends JPanel implements ActionListener {
         }
         
         if (!inGame) {
+            Server.Send(client,endMessage);
             timer.stop();
         }
     }
@@ -200,45 +214,21 @@ public class Board extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
         if (inGame) {
-
             checkApple();
             checkCollision();
             move();
         }
-
+        Map<String,Object> boardInfo = new HashMap<>();
+        boardInfo.put("dots",dots);
+        boardInfo.put("apple_x",apple_x);
+        boardInfo.put("apple_y",apple_y);
+        boardInfo.put("x",x);
+        boardInfo.put("y",y);
+        Gson gsonObject = new GsonBuilder().create();
+        String JSONObject = gsonObject.toJson(boardInfo);
+        Message moveMessage = new Message(Message.Message_Type.Move,JSONObject);
+        Server.Send(client,moveMessage);
         repaint();
     }
 
-    private class TAdapter extends KeyAdapter {
-
-        @Override
-        public void keyPressed(KeyEvent e) {
-
-            int key = e.getKeyCode();
-
-            if ((key == KeyEvent.VK_LEFT) && (!rightDirection)) {
-                leftDirection = true;
-                upDirection = false;
-                downDirection = false;
-            }
-
-            if ((key == KeyEvent.VK_RIGHT) && (!leftDirection)) {
-                rightDirection = true;
-                upDirection = false;
-                downDirection = false;
-            }
-
-            if ((key == KeyEvent.VK_UP) && (!downDirection)) {
-                upDirection = true;
-                rightDirection = false;
-                leftDirection = false;
-            }
-
-            if ((key == KeyEvent.VK_DOWN) && (!upDirection)) {
-                downDirection = true;
-                rightDirection = false;
-                leftDirection = false;
-            }
-        }
-    }
 }

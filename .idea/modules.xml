@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Java-Snake-Game.iml" filepath="$PROJECT_DIR$/Java-Snake-Game.iml" />
+      <module fileurl="file://$PROJECT_DIR$/snakeGame/snakeGame.iml" filepath="$PROJECT_DIR$/snakeGame/snakeGame.iml" />
     </modules>
   </component>
 </project>

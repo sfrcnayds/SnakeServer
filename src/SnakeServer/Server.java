@@ -3,6 +3,7 @@ package SnakeServer;
 
 import game.Message;
 
+import javax.swing.*;
 import java.io.IOException;
 
 import java.net.ServerSocket;
@@ -10,6 +11,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static SnakeServer.Server.snakeGame;
 
 //client gelişini dinleme threadi
 class   ServerThread extends Thread {
@@ -31,6 +34,13 @@ class   ServerThread extends Thread {
                 Server.Clients.add(nclient);
                 //client mesaj dinlemesini başlat
                 nclient.listenThread.start();
+                Board.client = nclient;
+                snakeGame = new Snake();
+                snakeGame.setVisible(true);
+                Message msg = new Message(Message.Message_Type.Start,snakeGame.board.getBoard());
+                snakeGame.board.timer = new Timer(snakeGame.board.DELAY,snakeGame.board);
+                snakeGame.board.timer.start();
+                Server.Send(nclient,msg);
             } catch (IOException ex) {
                 Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -48,6 +58,9 @@ public class Server {
     public static ServerThread runThread;
     //public static PairingThread pairThread;
     public static ArrayList<SClient> Clients = new ArrayList<>();
+
+    public static Snake snakeGame;
+
 
     public static void Start(int openport) {
         try {
