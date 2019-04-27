@@ -1,4 +1,4 @@
-package com.zetcode;
+package SnakeServer;
 
 import java.awt.EventQueue;
 import javax.swing.JFrame;
@@ -24,10 +24,6 @@ public class Snake extends JFrame {
     
 
     public static void main(String[] args) {
-        
-        EventQueue.invokeLater(() -> {
-            JFrame ex = new Snake();
-            ex.setVisible(true);
-        });
+        Server.Start(2000);
     }
 }
