@@ -15,7 +15,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
@@ -26,10 +25,10 @@ public class Board extends JPanel implements ActionListener {
 
     static public SClient client;
 
-    private final int B_WIDTH = 900;
-    private final int B_HEIGHT = 900;
+    private final int B_WIDTH = 300;
+    private final int B_HEIGHT = 300;
     private final int DOT_SIZE = 10;
-    private final int ALL_DOTS = 900;
+    private final int ALL_DOTS = 300;
     private final int RAND_POS = 29;
     public final int DELAY = 140;
 
